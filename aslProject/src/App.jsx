@@ -1,12 +1,9 @@
-import './App.css'
-
-
+import Navbar from "./Navbar"
 function App() {
 
   return (
-    <div className='text-amber-900 text-7xl font-bold'>
-      HI
-    
+    <div className=''>
+        <Navbar/>
     </div>
   )
 }
