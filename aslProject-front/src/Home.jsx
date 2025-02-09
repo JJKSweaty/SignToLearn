@@ -3,6 +3,8 @@ import WordDisplay from "./WordDisplay";
 import Flashcard from "./Flashcard";
 import signtoLearnPng from "./assets/Signtolearn.png";
 import Webcam from "react-webcam";
+import CameraFeed from "./LiveHandSignTracker";
+import LiveHandSignTracker from "./LiveHandSignTracker";
 
 const words = [
   "apple", "bat", "car", "dog", "echo", "frog", "gift", "help", "iron", "jump",
@@ -48,7 +50,7 @@ const Home = () => {
 
       {/* Webcam Feed */}
       <div className="relative w-full max-w-sm lg:w-[400px] h-[300px] bg-gray-800 rounded-lg shadow-xl transform hover:scale-105 transition-all duration-500 mb-8 lg:mb-0">
-        <Webcam className="w-full h-full rounded-lg" />
+        <LiveHandSignTracker/>
       </div>
 
       {/* Flashcards */}

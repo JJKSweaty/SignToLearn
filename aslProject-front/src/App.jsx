@@ -4,6 +4,7 @@ import About from "./About";
 import Home from "./Home"
 import Flashcard from './Flashcard';
 import WordDisplay from './WordDisplay';
+import LiveHandSignTracker from './LiveHandSignTracker';
 
 
 
@@ -19,10 +20,13 @@ function App() {
         <div className='bg-gradient-to-b from-blue-900 to-blue-600 min-h-screen flex flex-col'>
           <Navbar onAboutClick={onAboutClick} />
 
-           <Home/> 
+           {/* <Home/>  */}
+
           
             <div ref={aboutRef}>
-                <About/>
+                {/* <About/> */}
+            <LiveHandSignTracker/>
+
             </div>
             </div>
         

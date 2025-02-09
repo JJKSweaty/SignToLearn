@@ -41,6 +41,7 @@ Thumbs.db
 *.tar.gz
 *.tar
 *.7z
+*.h5
 
 # Database files (if you're using SQLite for development)
 *.db
