@@ -1,0 +1,53 @@
+# Python bytecode files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Virtual environment (this is where Flask-related libraries will be installed)
+venv/
+env/
+*.env
+
+# Environment variable files (to keep sensitive data private)
+.env
+
+# Flask-related build directories
+instance/
+.pytest_cache/
+coverage/
+nosetests.xml
+*.cover
+*.tox
+*.nox
+*.coverage
+*.hypothesis/
+
+# Log files
+*.log
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Large files (add any specific large files you want to ignore here)
+*.zip
+*.tar.gz
+*.tar
+*.7z
+
+# Database files (if you're using SQLite for development)
+*.db
+*.sqlite3
+
+# Flask-Migrate Alembic migrations folder (if using Flask-Migrate)
+migrations/
+
+# Other sensitive files
+*.bak
