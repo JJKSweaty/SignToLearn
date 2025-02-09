@@ -25,10 +25,9 @@ const LiveHandSignTracker = () => {
   }, []);
 
   return (
-    <div>
-      <h1>Live ASL Hand Tracking</h1>
+    <div className="video-container">
       {imageSrc ? (
-        <img src={imageSrc} alt="Live Feed" width="640px" />
+        <img src={imageSrc} alt="Live Feed" width="640px" style={{ transform: "scaleX(-1)" }} />
       ) : (
         <p>Waiting for video...</p>
       )}

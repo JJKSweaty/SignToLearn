@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-const Flashcard = ({ hint }) => {
+const Flashcard = ({ hint, imageSrc }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   return (
     <div 
-      className="relative w-70 h-54 cursor-pointer perspective"
+      className="relative w-64 h-64 cursor-pointer perspective"
       onClick={() => setIsFlipped(!isFlipped)}
     >
       <div
@@ -13,14 +13,15 @@ const Flashcard = ({ hint }) => {
         rounded-lg shadow-lg transition-transform duration-500 transform 
         ${isFlipped ? "rotate-y-180" : ""}`}
       >
-        {/* Show Hint (Front Side) or "Help" (Back Side) */}
+        {/* Front Side - Click for Help */}
         {!isFlipped ? (
-          <div className="absolute w-full h-full flex items-center justify-center bg-white rounded-lg">
-            <p className="text-lg font-semibold">{hint}</p>
+          <div className="absolute w-full h-full flex items-center justify-center bg-white text-black rounded-lg">
+            <p className="text-lg font-semibold">Click for Help</p>
           </div>
         ) : (
-          <div className="absolute w-full h-full flex items-center justify-center bg-blue-500 text-white rounded-lg rotate-y-180">
-            <p className="text-lg font-semibold">Click for Help!</p> {/* "Help" text on the back side */}
+          /* Back Side - Show ASL Image */
+          <div className="absolute w-full h-full flex items-center justify-center bg-white rounded-lg rotate-y-180">
+            <img src={imageSrc} alt="ASL Sign" className="h-48 mx-auto object-contain" />
           </div>
         )}
       </div>

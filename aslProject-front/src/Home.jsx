@@ -1,75 +1,111 @@
 import React, { useState, useEffect } from "react";
-import WordDisplay from "./WordDisplay";
 import Flashcard from "./Flashcard";
 import signtoLearnPng from "./assets/Signtolearn.png";
-import Webcam from "react-webcam";
-import CameraFeed from "./LiveHandSignTracker";
 import LiveHandSignTracker from "./LiveHandSignTracker";
+import { io } from "socket.io-client";
 
-const words = [
-  "apple", "bat", "car", "dog", "echo", "frog", "gift", "help", "iron", "jump",
-  "kick", "lime", "mug", "nut", "open", "park", "quit", "rest", "song", "trip"
-];
 
-const hints = words.map((word) => `Sign the word '${word}' correctly.`);
+import A_SIGN from "./assets/A_SIGN.png";
+import B_SIGN from "./assets/B_SIGN.png";
+import C_SIGN from "./assets/C_SIGN.png";
+import D_SIGN from "./assets/D_SIGN.png";
 
-const getRandomIndex = (length) => Math.floor(Math.random() * length);
 
+const words = ["ABA", "BAD", "CAB", "DAD"];
+
+
+
+const aslImages = {
+  A: A_SIGN,
+  B: B_SIGN,
+  C: C_SIGN,
+  D: D_SIGN
+};
+
+//WO
+const getRandomWord = () => words[Math.floor(Math.random() * words.length)];
+
+
+//Words To Spell
 const Home = () => {
-  const [currentWordIndex, setCurrentWordIndex] = useState(getRandomIndex(words.length));
-  const [isCorrect, setIsCorrect] = useState(false);
+  const [currentWord, setCurrentWord] = useState(getRandomWord());
+  const [progress, setProgress] = useState(new Array(currentWord.length).fill(false));
+  const [currentLetterIndex, setCurrentLetterIndex] = useState(0);
+  const [predictedLetter, setPredictedLetter] = useState("");
+
+
+  const [socket] = useState(() => io("http://127.0.0.1:5000", { transports: ["websocket"] }));
 
   useEffect(() => {
-    setIsCorrect(false);
-  }, [currentWordIndex]);
+    socket.on("video_stream", (data) => {
+      if (data.letter) {
+        const letter = data.letter.toUpperCase();
+        console.log("🔍 Received Letter:", letter);
+        setPredictedLetter(letter);
+      }
+    });
 
-  const handleWordClick = () => {
-    setIsCorrect(!isCorrect);
-  };
+    return () => {
+      socket.off("video_stream"); // Ensure event listener is removed
+    };
+  }, [socket]);
+
+  useEffect(() => {
+    if (!predictedLetter) return;
+
+    console.log("🔄 Checking Letter:", predictedLetter);
+    const letters = currentWord.split("");
+
+    if (predictedLetter === letters[currentLetterIndex] && !progress[currentLetterIndex]) {
+      setProgress((prevProgress) => {
+        const newProgress = [...prevProgress];
+        newProgress[currentLetterIndex] = true;
+        console.log(`✅ Letter ${letters[currentLetterIndex]} Matched!`);
+
+        setTimeout(() => {
+          if (currentLetterIndex + 1 < letters.length) {
+            setCurrentLetterIndex(currentLetterIndex + 1);
+          } else {
+            console.log("🎉 Word Completed! Switching to new word...");
+            const nextWord = getRandomWord();
+            setCurrentWord(nextWord);
+            setProgress(new Array(nextWord.length).fill(false));
+            setCurrentLetterIndex(0);
+          }
+        }, 500);
+
+        return newProgress;
+      });
+    }
+  }, [predictedLetter]);
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gradient-to-r from-blue-400 to-purple-600 p-8">
-      <h1 className="text-5xl font-bold text-white mb-6 drop-shadow-lg animate__animated animate__fadeIn">
-        Sign the Word Out!
-      </h1>
+    <div className="flex flex-col items-center min-h-screen bg-gradient-to-r from-blue-500 to-purple-700 p-8">
+      <h1 className="text-5xl font-bold text-white drop-shadow-lg">Sign the Word!</h1>
+      <img src={signtoLearnPng} alt="Sign to Learn Logo" className="h-32 w-auto mt-4 shadow-lg rounded-lg" />
 
-      <img
-        src={signtoLearnPng}
-        alt="Sign to Learn Logo"
-        className="h-48 w-auto mb-6 shadow-lg rounded-xl animate__animated animate__bounceIn animate__delay-1s"
-      />
-
-      <div
-        className={`text-6xl font-bold cursor-pointer ${
-          isCorrect ? "text-green-500" : "text-white"
-        } transition duration-300 mb-6 drop-shadow-lg hover:scale-110 animate__animated animate__fadeInUp`}
-        onClick={handleWordClick}
-      >
-        {words[currentWordIndex]}
+      <h2 className="text-4xl font-semibold text-white">Current Word:</h2>
+      <div className="text-6xl font-bold p-4 flex space-x-4 text-white bg-gray-800 rounded-lg transition duration-300">
+        {currentWord.split("").map((letter, index) => (
+          <span key={index} className={`transition duration-300 ${progress[index] ? "text-green-500" : "text-white"}`}>
+            {letter}
+          </span>
+        ))}
       </div>
 
-      {/* Webcam Feed */}
-      <div className="relative w-full max-w-sm lg:w-[400px] h-[300px] bg-gray-800 rounded-lg shadow-xl transform hover:scale-105 transition-all duration-500 mb-8 lg:mb-0">
-        <LiveHandSignTracker/>
-      </div>
-
-      {/* Flashcards */}
-      <div className="flex flex-col lg:flex-row items-center justify-center gap-8 w-full max-w-4xl mb-8">
-        <div className="flex flex-col items-center w-full lg:w-[400px]">
-          <Flashcard
-            hint={hints[currentWordIndex]}
-            answer={`This is the ASL sign for '${words[currentWordIndex]}'`}
-          />
+      <div className="flex flex-row items-center justify-center space-x-8 w-full max-w-4xl">
+        <div className="w-1/2 flex flex-col items-center">
+          <h2 className="text-2xl font-semibold text-white mb-2">Sign Detector</h2>
+          <div className="w-full max-w-md h-[300px] bg-white rounded-lg shadow-xl overflow-hidden border-4 border-white p-1">
+            <LiveHandSignTracker />
+          </div>
         </div>
-      </div>
 
-      <div className="mt-8">
-        <button
-          onClick={() => setCurrentWordIndex(getRandomIndex(words.length))}
-          className="px-8 py-3 bg-blue-700 text-white text-lg rounded-xl font-semibold hover:bg-blue-800 hover:scale-105 transition duration-300 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-300"
-        >
-          Next Word
-        </button>
+        {/* ✅ Flashcard now shows ASL image for only the current letter */}
+        <div className="w-1/2 flex flex-col items-center">
+          <h2 className="text-2xl font-semibold text-white mb-2">Flashcard</h2>
+          <Flashcard hint="Click for Help" imageSrc={aslImages[currentWord[currentLetterIndex]] || "textures/default_sign.png"} />
+        </div>
       </div>
     </div>
   );
