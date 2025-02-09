@@ -1,23 +1,25 @@
 import { useState } from "react";
-import signtoLearnPng from './assets/Signtolearn.png'
 
-const Navbar = () => {
+const Navbar = ({ onAboutClick }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <nav className="bg-blue-600 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo & Brand */}
+          {/* Brand Name Only (No Image) */}
           <div className="flex items-center">
-            <img src={signtoLearnPng} alt="Sign to Learn Logo" className="h-10 w-auto mr-3" />
-            <span className="text-white text-2xl font-bold">Sign to Learn</span>
+            <span className="text-white text-2xl font-bold">SignToLearn</span>
           </div>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex space-x-6">
             <a href="#" className="text-white hover:text-gray-300 transition">Home</a>
-            <a href="#" className="text-white hover:text-gray-300 transition">About</a>
+            <button 
+              onClick={onAboutClick} 
+              className="text-white hover:text-gray-300 transition focus:outline-none">
+              About
+            </button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -44,10 +46,7 @@ const Navbar = () => {
       {isOpen && (
         <div className="md:hidden bg-blue-700">
           <a href="#" className="block text-white px-4 py-2">Home</a>
-          <a href="#" className="block text-white px-4 py-2">Lessons</a>
-          <a href="#" className="block text-white px-4 py-2">Practice</a>
-          <a href="#" className="block text-white px-4 py-2">About</a>
-          <a href="#" className="block text-blue-600 bg-white px-4 py-2 text-center rounded-lg mx-4 my-2">Sign In</a>
+          <button onClick={onAboutClick} className="block text-white px-4 py-2 focus:outline-none">About</button>
         </div>
       )}
     </nav>
